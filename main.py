@@ -1,13 +1,16 @@
+import argparse
 import asyncio
-import aiofiles
 import datetime
+import os
+
+import aiofiles
+from dotenv import load_dotenv
 
 
-async def tcp_echo_client():
+async def save_chat(host: str, port: str, file_path: str) -> None:
     reader, writer = await asyncio.open_connection(
-        'minechat.dvmn.org', 5000)
-    print("Соединение Установлено")
-    async with aiofiles.open("chat_history.txt", 'a',encoding='UTF-8') as file:
+        host, port)
+    async with aiofiles.open(file_path, 'a', encoding='UTF-8') as file:
         while True:
             try:
                 data = await reader.read(100)
@@ -16,13 +19,22 @@ async def tcp_echo_client():
                 formatted_text = f'[{formatted_date}] {data.decode()}'
                 print(formatted_text)
                 await file.write(formatted_text)
-            except (UnicodeDecodeError):
+            except UnicodeDecodeError:
                 pass
 
 
 async def main():
-    # asyncio.create_task(tcp_echo_client())
-    await tcp_echo_client()
+    load_dotenv()
+    host = os.getenv("host")
+    port = os.getenv("port")
+    file_path = os.getenv("file_path")
+
+    parser = argparse.ArgumentParser(description="Скачивает файлы и упаковывает из в zip")
+    parser.add_argument('-host', '--host',default=host)
+    parser.add_argument('-port', '--port', type=str, default=port)
+    parser.add_argument('-file', '--history', type=str, default=file_path)
+    args = parser.parse_args()
+    await save_chat(args.host, args.port, args.path)
 
 
 if __name__ == '__main__':
