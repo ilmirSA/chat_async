@@ -1,6 +1,6 @@
 import asyncio
 import logging
-
+import json
 logger = logging.getLogger(__name__)
 
 
@@ -10,8 +10,16 @@ async def write_to_chat(hash: str, message: str):
     data = await reader.read(150)
     logger.debug(data.decode())
     writer.write(f"{hash}\n".encode())
-    data = await reader.read(400)
-    logger.debug(data.decode())
+    data = await reader.readline()
+    json_data=data.decode().strip()
+    logger.debug(json_data)
+
+    if json.loads(json_data) is None:
+        writer.close()
+        await writer.wait_closed()
+        print("Неизвестный токен. Проверьте его или зарегистрируйте заново.")
+        return
+
     writer.write(f"{message}\n".encode())
     logger.debug(message)
     writer.write("\n".encode())
@@ -25,10 +33,10 @@ async def main():
                         format="%(levelname)1s:%(module)1s:%(message)s",
                         encoding="UTF-8"
                         )
-    await write_to_chat("98604f8e-5c77-11ef-abed-0242ac110002", "Hello World?")
-
+    await write_to_chat("98604f8e-5c77-11ef-abed-0242ac110003", "Hello World?")
 
 if __name__ == '__main__':
 
 
     asyncio.run(main())
+
