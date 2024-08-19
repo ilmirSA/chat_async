@@ -1,10 +1,15 @@
 import argparse
 import asyncio
 import datetime
+import json
+import logging
 import os
 
 import aiofiles
 from dotenv import load_dotenv
+
+from authorise import authorise
+from sender import submit_message
 
 
 async def save_chat(host: str, port: str, file_path: str) -> None:
@@ -22,23 +27,31 @@ async def save_chat(host: str, port: str, file_path: str) -> None:
             except UnicodeDecodeError:
                 pass
 
-async def register():
-    pass
-async def submit_message():
-    
 
 async def main():
+    logging.basicConfig(filename='auth.log', level=logging.DEBUG,
+                        datefmt="%Y-%m-%d %H:%M:%S",
+                        format="%(levelname)1s:%(module)1s:%(message)s",
+                        encoding="UTF-8"
+                        )
+
     load_dotenv()
     host = os.getenv("host")
+    user_token = os.getenv("user_token")
+    username = os.getenv("username")
     port = os.getenv("port")
     file_path = os.getenv("file_path")
 
     parser = argparse.ArgumentParser(description="Подключается к чату и сохраняет переписку ")
     parser.add_argument('-host', '--host', default=host)
+    parser.add_argument('-m', '--message', nargs='+', required=True, help="Текст сообщения")
+    parser.add_argument('-token', '--token', default=user_token, help="Укажите свой токен")
+    parser.add_argument('-user', '--username', default=username, help="Укажите свой юзер нейм")
     parser.add_argument('-port', '--port', type=str, default=port)
     parser.add_argument('-path', '--history', type=str, default=file_path)
     args = parser.parse_args()
-    await save_chat(args.host, args.port, args.history)
+
+    await submit_message(args.host, args.token, args.message)
 
 
 if __name__ == '__main__':
