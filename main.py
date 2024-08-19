@@ -22,6 +22,10 @@ async def save_chat(host: str, port: str, file_path: str) -> None:
             except UnicodeDecodeError:
                 pass
 
+async def register():
+    pass
+async def submit_message():
+    
 
 async def main():
     load_dotenv()
@@ -29,12 +33,12 @@ async def main():
     port = os.getenv("port")
     file_path = os.getenv("file_path")
 
-    parser = argparse.ArgumentParser(description="Скачивает файлы и упаковывает из в zip")
-    parser.add_argument('-host', '--host',default=host)
+    parser = argparse.ArgumentParser(description="Подключается к чату и сохраняет переписку ")
+    parser.add_argument('-host', '--host', default=host)
     parser.add_argument('-port', '--port', type=str, default=port)
-    parser.add_argument('-file', '--history', type=str, default=file_path)
+    parser.add_argument('-path', '--history', type=str, default=file_path)
     args = parser.parse_args()
-    await save_chat(args.host, args.port, args.path)
+    await save_chat(args.host, args.port, args.history)
 
 
 if __name__ == '__main__':
