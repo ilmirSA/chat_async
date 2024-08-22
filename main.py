@@ -44,14 +44,18 @@ async def main():
 
     parser = argparse.ArgumentParser(description="Подключается к чату и сохраняет переписку ")
     parser.add_argument('-host', '--host', default=host)
-    parser.add_argument('-m', '--message', nargs='+', required=True, help="Текст сообщения")
+    parser.add_argument('-m','--message',nargs='+',required=True, help="Текст сообщения")
     parser.add_argument('-token', '--token', default=user_token, help="Укажите свой токен")
     parser.add_argument('-user', '--username', default=username, help="Укажите свой юзер нейм")
     parser.add_argument('-port', '--port', type=str, default=port)
     parser.add_argument('-path', '--history', type=str, default=file_path)
     args = parser.parse_args()
 
-    await submit_message(args.host, args.token, args.message)
+    if args.username != username:
+        await authorise(args.host, args.username)
+
+    #await submit_message(args.host, args.token, args.message)
+    await asyncio.create_task(save_chat(args.host, args.port, args.history))
 
 
 if __name__ == '__main__':

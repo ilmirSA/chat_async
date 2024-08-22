@@ -31,3 +31,22 @@ async def authorise(host: str, username: str) -> None:
     writer.close()
     await writer.wait_closed()
 
+# async def main():
+#     logging.basicConfig(filename='auth.log', level=logging.DEBUG,
+#                         datefmt="%Y-%m-%d %H:%M:%S",
+#                         format="%(levelname)1s:%(module)1s:%(message)s",
+#                         encoding="UTF-8"
+#                         )
+#
+#     load_dotenv()
+#     host = os.getenv("host")
+#     auth_port = os.getenv("auth_port")
+#
+#     parser = argparse.ArgumentParser(description="Регестрирует пользоватлея")
+#     parser.add_argument('-u', '--username', help="Напишите юзернейм")
+#     args = parser.parse_args()
+#     await user_authorize(host, auth_port, args.username)
+#
+#
+# if __name__ == '__main__':
+#     asyncio.run(main())
