@@ -18,22 +18,26 @@ logging.basicConfig(filename='auth.log', level=logging.DEBUG,
 async def authorise(host: str,port:int, username: str) -> None:
     reader, writer = await asyncio.open_connection(
         host, port)
-    data = await reader.readline()
+    try:
+        data = await reader.readline()
 
-    logger.debug(data.decode())
-    writer.write("\n".encode())
-    data = await reader.readline()
-    logger.debug(data.decode())
-    writer.write(str(username).encode())
-    writer.write("\n".encode())
-    data = await reader.readline()
-    logger.debug(data.decode())
-    json_data = data.decode().strip()
+        logger.debug(data.decode())
+        writer.write("\n".encode())
+        await writer.drain()
+        data = await reader.readline()
+        logger.debug(data.decode())
+        writer.write(str(username).encode())
+        await writer.drain()
+        writer.write("\n".encode())
+        await writer.drain()
+        data = await reader.readline()
+        logger.debug(data.decode())
+        json_data = data.decode().strip()
 
-    async with aiofiles.open('cred.txt', 'w') as file:
-        await file.write(json_data)
-    writer.close()
-    await writer.wait_closed()
+        async with aiofiles.open('cred.txt', 'w') as file:
+            await file.write(json_data)
+    finally:
+        writer.close()
 
 
 async def main():
