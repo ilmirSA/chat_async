@@ -11,19 +11,19 @@ from dotenv import load_dotenv
 async def save_chat(host: str, port: str, file_path: str) -> None:
     reader, writer = await asyncio.open_connection(
         host, port)
-    async with aiofiles.open(file_path, 'a', encoding='UTF-8') as file:
+    try:
         while True:
-            try:
-                data = await reader.read(100)
-                now = datetime.datetime.now()
-                formatted_date = now.strftime("%d.%m.%Y %H:%M")
-                formatted_text = f'[{formatted_date}] {data.decode()}'
-                print(formatted_text)
+            data = await reader.read(100)
+            now = datetime.datetime.now()
+            formatted_date = now.strftime("%d.%m.%Y %H:%M")
+            formatted_text = f'[{formatted_date}] {data.decode()}'
+            print(formatted_text)
+            async with aiofiles.open(file_path, 'a', encoding='UTF-8') as file:
                 await file.write(formatted_text)
-            except UnicodeDecodeError:
-                pass
-            finally:
-                writer.close()
+
+    finally:
+        writer.close()
+
 
 async def main():
     logging.basicConfig(filename='auth.log', level=logging.DEBUG,
