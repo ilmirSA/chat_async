@@ -22,7 +22,8 @@ async def save_chat(host: str, port: str, file_path: str) -> None:
                 await file.write(formatted_text)
             except UnicodeDecodeError:
                 pass
-
+            finally:
+                writer.close()
 
 async def main():
     logging.basicConfig(filename='auth.log', level=logging.DEBUG,
