@@ -10,10 +10,10 @@ from dotenv import load_dotenv
 logger = logging.getLogger(__name__)
 
 
-async def submit_message(host: str, hash: str, message: str):
+async def submit_message(host: str,port, hash: str, message: str):
 
         reader, writer = await asyncio.open_connection(
-            host, 5050)
+            host, port)
         try:
             data = await reader.read(150)
             logger.debug(data.decode())
@@ -40,6 +40,7 @@ async def submit_message(host: str, hash: str, message: str):
 async def main():
     load_dotenv()
     host = os.getenv("host")
+    port=5050
 
     if os.path.exists(".cred.txt"):
         print("Нету файла с авторизациями ! запустите файл authorise.py и зарегистрируйтесь")
@@ -60,7 +61,7 @@ async def main():
 
     args = parser.parse_args()
 
-    await submit_message(host, user_cred['account_hash'], args.message)
+    await submit_message(host, port,user_cred['account_hash'], args.message)
 
 
 if __name__ == '__main__':

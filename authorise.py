@@ -15,9 +15,9 @@ logging.basicConfig(filename='auth.log', level=logging.DEBUG,
                     )
 
 
-async def authorise(host: str, username: str) -> None:
+async def authorise(host: str,port:int, username: str) -> None:
     reader, writer = await asyncio.open_connection(
-        host, 5050)
+        host, port)
     data = await reader.readline()
 
     logger.debug(data.decode())
@@ -45,10 +45,11 @@ async def main():
 
     load_dotenv()
     host = os.getenv("host")
+    port = 5050
     parser = argparse.ArgumentParser(description="Регестрирует пользоватлея")
     parser.add_argument('-u', '--username', help="Напишите юзернейм")
     args = parser.parse_args()
-    await authorise(host, args.username)
+    await authorise(host,port, args.username)
 
 
 if __name__ == '__main__':
