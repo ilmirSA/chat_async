@@ -14,8 +14,9 @@ async def submit_message(host: str,port, hash: str, message: str):
 
         reader, writer = await asyncio.open_connection(
             host, port)
+        read_bytes=150
         try:
-            data = await reader.read(150)
+            data = await reader.read(read_bytes)
             logger.debug(data.decode())
             writer.write(f"{hash}\n".encode())
             await writer.drain()
